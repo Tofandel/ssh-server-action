@@ -8,33 +8,32 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: Port ${{matrix.port}}, User ${{matrix.user-name}}, Pass ${{matrix.password-access}} Sudo ${{matrix.sudo-access}}
+    name: Port ${{matrix.port}}, User ${{matrix.user_name}}, Sudo ${{matrix.sudo_access}}
 
     strategy:
       matrix:
-        node-version: ['16.x']
+        node_version: ['16.x']
         port: [22, 2222]
-        user-name: ['root', 'my-user']
-        password-access: ['true', 'false']
-        sudo-access: ['true', 'false']
+        user_name: ['root', 'my-user']
+        sudo_access: ['true', 'false']
 
     steps:
     - uses: actions/checkout@v1
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Use Node.js ${{ matrix.node_version }}
       uses: actions/setup-node@v1
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: ${{ matrix.node_version }}
     - name: Shutdown Ubuntu SSH (SUDO)
       run: sudo service ssh stop
 
     - name: Set up SSH
       uses: tofandel/ssh-server-action@master
       with:
+        hostname: dev.com
         port: ${{ matrix.port }} # Optional, default value is 22. The exposed ssh port
-        user_name: ${{ matrix.user-name }} # Optional, default value is ssh-user
-        user_password: ${{ secrets.user_password }} # Optional, requires password_access: true
-        password_access: ${{ matrix.password-access }} # Optional, allow password access, default: false
-        sudo_access: ${{ matrix.sudo-access }} # Optional, allow user to use sudo without password, default: false
+        user_name: ${{ matrix.user_name }} # Optional, default value is ssh-user
+        user_password: ${{ secrets.user_password }} # Optional
+        sudo_access: ${{ matrix.sudo_access }} # Optional, allow user to use sudo without password, default: false
         public_key: $PUBLIC_KEY # Optional, Public key authorized to access the server
         public_key_url: https://github.com/Tofandel.keys # Optional, url to retrieve the public key
 
@@ -43,6 +42,6 @@ jobs:
         yarn install --frozen-lockfile
         yarn lint
         echo "${{ secrets.private_key}}" > private-key.rsa
-        yarn test --port=${{ matrix.port }} --username=${{ matrix.user-name }} --private-key=private-key.rsa --password=${{ secrets.user_password }}
+        yarn test --port=${{ matrix.port }} --username=${{ matrix.user_name }} --private-key=private-key.rsa --password=${{ secrets.user_password }} --sudo=${{ matrix.sudo_access }}
       env:
         CI: true

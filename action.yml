@@ -5,6 +5,9 @@ branding:
   icon: 'server'
   color: 'green'
 inputs:
+  hostname:
+    description: 'The hostname of the ssh server'
+    required: false
   port:
     description: 'The internal port of the ssh server'
     required: false
@@ -16,11 +19,6 @@ inputs:
   user_password:
     description: 'The user password'
     required: false
-    default: null
-  password_access:
-    description: 'Allow password access'
-    required: false
-    default: false
   sudo_access:
     description: 'Allow sudo access'
     required: false

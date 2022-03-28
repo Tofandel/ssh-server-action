@@ -9,5 +9,5 @@ RUN chmod +x /entrypoint.sh
 RUN ./setup.sh
 
 EXPOSE 22
-ENTRYPOINT ["/setup.sh"]
-CMD ["/usr/sbin/sshd","-D"]
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["tail", "-f", "/dev/null"]
