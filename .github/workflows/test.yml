@@ -1,0 +1,48 @@
+name: test
+
+on: [push, pull_request]
+
+env:
+  PUBLIC_KEY: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCbf7E0rfuTKzPZMsXDWy62qJcKLkQREOt/BO4fzbuvnV+qUg+joyJtiN8OSE9AiqSDekOLzZkhU46YhhHuHwDM6M6vdNBPC242tZWkSwrFTEKDPVRHGofkTUhOZHqYdwYNwQ+n4oP40A9940DrXIUjwwmjYaFbAzKpEs/M/8wozEF187Grqq3+m6w5aWOaTIfVxOQ2MVwcU1chVFROxnf54veVmZyI4u1ci8WZdjE2bi4Ee3NygFOrZgatOBmsK6zxPnmQ6EmGNYcDpc8yJF8AR1JguOJhNpyNy2sFupdot9C8Vx8oIjyR012YH444Fi1P2JyJTQeX1yHJMpXnuGd7Nhc4nEPk18qRwybEOL+s6nMZbBUpE9wu3pwHyJs9V5kqcdIovqkith7WLzKVnObREQehr9wNGF/3/374NeSoQpF1aIuZ+sbfSRrqN8YxtBAyNNYE1E5B2Qtmp+WXVG237baadgszcFVhSL4pYxuo7zVors/bCM1oF8QtFBpksL0= tofandel@Tofandel"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Port ${{matrix.port}}, User ${{matrix.user-name}}, Pass ${{matrix.password-access}} Sudo ${{matrix.sudo-access}}
+
+    strategy:
+      matrix:
+        node-version: ['16.x']
+        port: [22, 2222]
+        user-name: ['root', 'my-user']
+        password-access: ['true', 'false']
+        sudo-access: ['true', 'false']
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Shutdown Ubuntu SSH (SUDO)
+      run: sudo service ssh stop
+
+    - name: Set up SSH
+      uses: tofandel/ssh-server-action@master
+      with:
+        port: ${{ matrix.port }} # Optional, default value is 22. The exposed ssh port
+        user_name: ${{ matrix.user-name }} # Optional, default value is ssh-user
+        user_password: ${{ secrets.user_password }} # Optional, requires password_access: true
+        password_access: ${{ matrix.password-access }} # Optional, allow password access, default: false
+        sudo_access: ${{ matrix.sudo-access }} # Optional, allow user to use sudo without password, default: false
+        public_key: $PUBLIC_KEY # Optional, Public key authorized to access the server
+        public_key_url: https://github.com/Tofandel.keys # Optional, url to retrieve the public key
+
+    - name: npm install, build, and test
+      run: |
+        yarn install --frozen-lockfile
+        yarn lint
+        echo "${{ secrets.private_key}}" > private-key.rsa
+        yarn test --port=${{ matrix.port }} --username=${{ matrix.user-name }} --private-key=private-key.rsa --password=${{ secrets.user_password }}
+      env:
+        CI: true
