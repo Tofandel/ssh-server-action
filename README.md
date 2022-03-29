@@ -1,5 +1,7 @@
 # SSH Server GitHub Action
 
+[![test](https://github.com/Tofandel/ssh-server-action/actions/workflows/test.yml/badge.svg)](https://github.com/Tofandel/ssh-server-action/actions/workflows/test.yml)
+
 This [GitHub Action](https://github.com/features/actions) sets up a SSH server for testing purposes.
 
 It is based on the Docker container and is limited by Github Actions, which contains only Linux now. Therefore it does not work in Mac OS and Windows environment.
