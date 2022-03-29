@@ -18,7 +18,7 @@ mkdir -p "$HOME/.ssh/"
 [ -n "$INPUT_USER_PASSWORD" ] && sed -i -E "s/#?(ChallengeResponseAuthentication|PasswordAuthentication).*/\1 yes/g" /etc/ssh/sshd_config
 [ -z "$INPUT_USER_PASSWORD" ] && sed -i -E "s/#?(ChallengeResponseAuthentication|PasswordAuthentication).*/\1 no/g" /etc/ssh/sshd_config
 [ -n "$INPUT_USER_PASSWORD" ] && (echo "$INPUT_USER_PASSWORD"; echo "$INPUT_USER_PASSWORD") | passwd "$INPUT_USER_NAME"
-[ -z "$INPUT_USER_PASSWORD" ] && (echo ""; echo "") | passwd "$INPUT_USER_NAME"
+[ -z "$INPUT_USER_PASSWORD" ] && [ "$INPUT_USER_NAME" != "root" ] && (echo ""; echo "") | passwd "$INPUT_USER_NAME"
 echo "AllowUsers $INPUT_USER_NAME" >> /etc/ssh/sshd_config
 
 [ -z "$INPUT_USER_PASSWORD" ] && [ -z "$INPUT_PUBLIC_KEY" ] && [ -z "$INPUT_PUBLIC_KEY_URL" ] && ssh-keygen -f /tmp/test_ssh -N "" && cat /tmp/test_ssh.pub >> "$HOME/.ssh/authorized_keys" && echo "::set-secret name=ssh_private_key::$(cat /tmp/test_ssh | tr '\n' '')" && rm /tmp/test_ssh
