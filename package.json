@@ -10,6 +10,7 @@
   "scripts": {
     "lint": "eslint . --ext .ts",
     "test": "mocha -r ts-node/register test/*-test.ts",
+    "test:local": "bash -c '(source .env && yarn test)'",
     "build": "bash -c '(source .env && chmod +x ./entrypoint.sh && ./entrypoint.sh)'"
   },
   "repository": {

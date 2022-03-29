@@ -3,16 +3,17 @@ import { expect } from 'chai';
 import { NodeSSH } from 'node-ssh';
 import { optional } from './arguments';
 
-const username = optional('username');
-const password = optional('password');
-const hasSudo = optional('sudo');
-const hostname = optional('hostname');
+const username = optional('username') || process.env.INPUT_USER_NAME;
+const password = optional('password') || process.env.INPUT_USER_PASSWORD;
+const hasSudo = optional('sudo') || process.env.INPUT_SUDO_ACCESS;
+const hostname = optional('hostname') || process.env.INPUT_HOSTNAME;
+const debug = optional('debug') || process.env.INPUT_DEBUG;
 
 function createSSH() {
   const ssh = new NodeSSH();
   return ssh.connect({
     host: 'localhost',
-    port: parseInt(optional('port'), 10),
+    port: parseInt(optional('port') || process.env.INPUT_PORT, 10),
     username,
     password,
     privateKey: password ? optional('private-key') : undefined,
@@ -33,14 +34,14 @@ describe('SSH', () => {
     expect(ssh.isConnected()).to.be.true;
     let result = await ssh.execCommand('whoami');
     expect(result.stdout).to.be.eq(username);
-    expect(result.stderr).to.be.empty;
+    !debug && expect(result.stderr).to.be.empty;
     result = await ssh.execCommand('sudo -u root whoami');
     if (hasSudo || username === 'root') {
       expect(result.stdout).to.be.eq('root');
-      expect(result.stderr).to.be.empty;
+      !debug && expect(result.stderr).to.be.empty;
     } else {
       expect(result.stdout).to.be.empty;
-      expect(result.stderr).not.to.be.empty;
+      !debug && expect(result.stderr).not.to.be.empty;
     }
     result = await ssh.execCommand('hostname');
     expect(result.stdout).to.be.eq(hostname);
