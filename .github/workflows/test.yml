@@ -15,7 +15,7 @@ jobs:
         node_version: ['16.x']
         port: [22, 2222]
         user_name: ['root', 'my-user']
-        user_pass: ['user_P@SSWORD', null]
+        user_pass: ['USER_PASSWORD', null]
         sudo_access: ['true', 'false']
         hostname: ['dev.com']
 
@@ -34,7 +34,7 @@ jobs:
         hostname: ${{ matrix.hostname }}
         port: ${{ matrix.port }} # Optional, default value is 22. The exposed ssh port
         user_name: ${{ matrix.user_name }} # Optional, default value is ssh-user
-        user_password: ${{ matrix.user_pass }} # Optional
+        user_password: ${{ secrets[matrix.user_pass] }} # Optional
         sudo_access: ${{ matrix.sudo_access }} # Optional, allow user to use sudo without password, default: false
         public_key: $PUBLIC_KEY # Optional, Public key authorized to access the server
         public_key_url: https://github.com/Tofandel.keys # Optional, url to retrieve the public key
@@ -44,6 +44,6 @@ jobs:
         yarn install --frozen-lockfile
         yarn lint
         echo "${{ secrets.ssh_private_key}}" > private-key.rsa
-        yarn test --port=${{ matrix.port }} --username=${{ matrix.user_name }} --private-key=private-key.rsa --password="${{ matrix.user_pass }}" --sudo=${{ matrix.sudo_access }} --hostname=${{ matrix.hostname }}
+        yarn test --port=${{ matrix.port }} --username=${{ matrix.user_name }} --private-key=private-key.rsa --password="${{ secrets[matrix.user_pass] }}" --sudo=${{ matrix.sudo_access }} --hostname=${{ matrix.hostname }}
       env:
         CI: true
