@@ -8,10 +8,11 @@
     "test": "test"
   },
   "scripts": {
+    "stop": "[[ $(docker ps -a -f ancestor=29a95e:local -q) ]] && docker stop $(docker ps -a -f ancestor=29a95e:local -q) && docker rm $(docker ps -a -f ancestor=29a95e:local -q) || echo 'no running container'",
     "lint": "eslint . --ext .ts",
     "test": "mocha -r ts-node/register test/*-test.ts",
-    "test:local": "bash -c '(source .env && yarn test)'",
-    "build": "bash -c '(source .env && chmod +x ./entrypoint.sh && ./entrypoint.sh)'"
+    "test:local": "yarn build && bash -c '(source .env && yarn test --private-key=ssh.key)'",
+    "build": "yarn stop && bash -c '(source .env && chmod +x ./entrypoint.sh && ./entrypoint.sh)'"
   },
   "repository": {
     "type": "git",

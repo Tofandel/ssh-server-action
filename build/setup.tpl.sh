@@ -2,6 +2,7 @@
 
 ssh-keygen -A
 sed -i -E "s|(AuthorizedKeysFile).*|\1 %h/.ssh/authorized_keys|g" /etc/ssh/sshd_config
+sed -i -E "s|#?(UseDNS).*|\1 yes|g" /etc/ssh/sshd_config
 
 HOME='/root'
 

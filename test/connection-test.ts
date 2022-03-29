@@ -15,7 +15,7 @@ function createSSH() {
     host: 'localhost',
     port: parseInt(optional('port') || process.env.INPUT_PORT, 10),
     username,
-    password,
+    password: password || undefined,
     privateKey: !password ? optional('private-key') : undefined,
   });
 }
