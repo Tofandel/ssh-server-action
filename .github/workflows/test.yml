@@ -3,18 +3,19 @@ name: test
 on: [push, pull_request]
 
 env:
-  PUBLIC_KEY: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCbf7E0rfuTKzPZMsXDWy62qJcKLkQREOt/BO4fzbuvnV+qUg+joyJtiN8OSE9AiqSDekOLzZkhU46YhhHuHwDM6M6vdNBPC242tZWkSwrFTEKDPVRHGofkTUhOZHqYdwYNwQ+n4oP40A9940DrXIUjwwmjYaFbAzKpEs/M/8wozEF187Grqq3+m6w5aWOaTIfVxOQ2MVwcU1chVFROxnf54veVmZyI4u1ci8WZdjE2bi4Ee3NygFOrZgatOBmsK6zxPnmQ6EmGNYcDpc8yJF8AR1JguOJhNpyNy2sFupdot9C8Vx8oIjyR012YH444Fi1P2JyJTQeX1yHJMpXnuGd7Nhc4nEPk18qRwybEOL+s6nMZbBUpE9wu3pwHyJs9V5kqcdIovqkith7WLzKVnObREQehr9wNGF/3/374NeSoQpF1aIuZ+sbfSRrqN8YxtBAyNNYE1E5B2Qtmp+WXVG237baadgszcFVhSL4pYxuo7zVors/bCM1oF8QtFBpksL0= tofandel@Tofandel"
+  PUBLIC_KEY: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCnuudUKwp+pM/2mjnLmVZcKyJmV/CZ63mo+q2XDxeAaC5etpLvhxtOoffDHtz4EyafWjy8E3n1zwBb/xq0j97ubGn3U5ymK4dTU6jtM5nqhv1XYMzh43W52GndMcKScWiPW3ddeDjwxPYfFIYoSckpRVkftifz9ADsWl7fkoabX0kZqq+kbTxeNEbJwtqdSl9VXYleJdhRH8D1+qUySh5STeCPxE15szjwvOEC2br3wa8uqZbna0xYLJXIeGog9HwTpVq5juC8Xs80qDgGJJ0S1pU6LjeQKYtpwIw1gV7iUsZd9c6uIXdetsCxX5SuniMGAjFv+MenYYOju2DQoDBSL2rYgkDWKjpVGaubRPVArFtNzK5F5Y22gAMWSOt+n0wixtmxs7qYK2kcCFjFUQH196hTNjGJaHPKfGh9FAgG8ZTpkWPd+U4RzvMWHIcZo7pp7iUgK7U36BDsnoFJLCfsa6xMeltWnn0HvCyvi2Hfu7Sy4ohaAoOyVswtBJnll3k= tofandel@Tofandel"
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: Port ${{matrix.port}}, User ${{matrix.user_name}}, Sudo ${{matrix.sudo_access}}
+    name: Port ${{matrix.port}}, User ${{matrix.user_name}}, Pass ${{matrix.user_pass}}, Sudo ${{matrix.sudo_access}}
 
     strategy:
       matrix:
         node_version: ['16.x']
         port: [22, 2222]
         user_name: ['root', 'my-user']
+        user_pass: ['user_password', null]
         sudo_access: ['true', 'false']
 
     steps:
@@ -32,7 +33,7 @@ jobs:
         hostname: dev.com
         port: ${{ matrix.port }} # Optional, default value is 22. The exposed ssh port
         user_name: ${{ matrix.user_name }} # Optional, default value is ssh-user
-        user_password: ${{ secrets.user_password }} # Optional
+        user_password: ${{ secrets[matrix.user_pass] || '' }} # Optional
         sudo_access: ${{ matrix.sudo_access }} # Optional, allow user to use sudo without password, default: false
         public_key: $PUBLIC_KEY # Optional, Public key authorized to access the server
         public_key_url: https://github.com/Tofandel.keys # Optional, url to retrieve the public key
@@ -41,7 +42,7 @@ jobs:
       run: |
         yarn install --frozen-lockfile
         yarn lint
-        echo "${{ secrets.private_key}}" > private-key.rsa
-        yarn test --port=${{ matrix.port }} --username=${{ matrix.user_name }} --private-key=private-key.rsa --password=${{ secrets.user_password }} --sudo=${{ matrix.sudo_access }}
+        echo "${{ secrets.ssh_private_key}}" > private-key.rsa
+        yarn test --port=${{ matrix.port }} --username=${{ matrix.user_name }} --private-key=private-key.rsa --password=${{ secrets[matrix.user_pass] || '""' }} --sudo=${{ matrix.sudo_access }}
       env:
         CI: true

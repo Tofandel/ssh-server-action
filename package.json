@@ -9,7 +9,8 @@
   },
   "scripts": {
     "lint": "eslint . --ext .ts",
-    "test": "mocha -r ts-node/register test/*-test.ts"
+    "test": "mocha -r ts-node/register test/*-test.ts",
+    "build": "bash -c '(source .env && chmod +x ./entrypoint.sh && ./entrypoint.sh)'"
   },
   "repository": {
     "type": "git",

@@ -8,6 +8,9 @@ inputs:
   hostname:
     description: 'The hostname of the ssh server'
     required: false
+  debug:
+    description: 'Debug the ssh connection'
+    required: false
   port:
     description: 'The internal port of the ssh server'
     required: false

@@ -6,3 +6,7 @@
 
 node_modules/
 package-lock.json
+.env
+ssh.key
+build/setup.sh
+build/entrypoint.sh
