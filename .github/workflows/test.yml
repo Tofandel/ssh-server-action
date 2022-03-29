@@ -38,7 +38,7 @@ jobs:
         user_name: ${{ matrix.user_name }} # Optional, default value is ssh-user
         user_password: ${{ secrets[matrix.user_pass] }} # Optional
         sudo_access: ${{ matrix.sudo_access }} # Optional, allow user to use sudo without password, default: false
-        public_key: ${{ PUBLIC_KEY }} # Optional, Public key authorized to access the server
+        public_key: ${{ env.PUBLIC_KEY }} # Optional, Public key authorized to access the server
         public_key_url: https://github.com/Tofandel.keys # Optional, url to retrieve the public key
 
     - name: npm install, build, and test
