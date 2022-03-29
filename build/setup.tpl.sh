@@ -9,12 +9,11 @@ mkdir -p "$HOME/.ssh/"
 (umask 066; touch "$HOME/.ssh/authorized_keys")
 
 [ "$INPUT_USER_NAME" != "root" ] && HOME="/home/$INPUT_USER_NAME"
-[ -n "$INPUT_HOSTNAME" ] && echo "$INPUT_HOSTNAME" > /etc/hostname
 [ -n "$INPUT_PUBLIC_KEY" ] && echo "$INPUT_PUBLIC_KEY" >> "$HOME/.ssh/authorized_keys"
 [ -n "$INPUT_PUBLIC_KEY_URL" ] && wget -qO- "$INPUT_PUBLIC_KEY_URL" >> "$HOME/.ssh/authorized_keys"
 [ "$INPUT_USER_NAME" != "root" ] && addgroup "$INPUT_USER_NAME" && adduser --shell /bin/ash --disabled-password --home "$HOME" --ingroup "$INPUT_USER_NAME" "$INPUT_USER_NAME"
 [ "$INPUT_USER_NAME" = "root" ] && sed -i -E "s/#?(PermitRootLogin).*/\1 yes/g" /etc/ssh/sshd_config
-[ "$INPUT_SUDO_ACCESS" = "true" ] && sed -i -E "s/(%sudo.*?)ALL/\1NOPASSWD:ALL/g" /etc/sudoers && addgroup sudo && addgroup "$INPUT_USER_NAME" sudo
+[ "$INPUT_SUDO_ACCESS" = "true" ] && sed -i -E "s/#? ?(%sudo.*?)ALL/\1NOPASSWD:ALL/g" /etc/sudoers && addgroup sudo && addgroup "$INPUT_USER_NAME" sudo
 [ -n "$INPUT_USER_PASSWORD" ] && sed -i -E "s/#?(ChallengeResponseAuthentication|PasswordAuthentication).*/\1 yes/g" /etc/ssh/sshd_config
 [ -z "$INPUT_USER_PASSWORD" ] && sed -i -E "s/#?(ChallengeResponseAuthentication|PasswordAuthentication).*/\1 no/g" /etc/ssh/sshd_config
 [ -n "$INPUT_USER_PASSWORD" ] && (echo "$INPUT_USER_PASSWORD"; echo "$INPUT_USER_PASSWORD") | passwd "$INPUT_USER_NAME"
