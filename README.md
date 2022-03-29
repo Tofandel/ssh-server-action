@@ -21,6 +21,8 @@ steps:
     public_key_url: https://github.com/${{ github.actor }}.keys # Optional, url to retrieve the public key
 ```
 
+You must provide at least one of public_key_url, public_key or user_password or you will not be able to login because empty password login is disabled
+
 ## License
 
 This project is released under the [MIT License](LICENSE).
