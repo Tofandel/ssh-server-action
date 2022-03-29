@@ -31,7 +31,6 @@ jobs:
     - name: Set up SSH
       uses: tofandel/ssh-server-action@master
       with:
-        debug: true
         hostname: ${{ matrix.hostname }}
         port: ${{ matrix.port }} # Optional, default value is 22. The exposed ssh port
         user_name: ${{ matrix.user_name }} # Optional, default value is ssh-user
@@ -46,7 +45,7 @@ jobs:
         yarn lint
         echo "${{ secrets.ssh_private_key}}" > private-key.rsa
         yarn test --port=${{ matrix.port }} --username=${{ matrix.user_name }} --private-key=private-key.rsa \
-          --password="${{ secrets[matrix.user_pass] }}" --sudo=${{ matrix.sudo_access }} --hostname=${{ matrix.hostname }}\
-          --debug=true
+          --sudo=${{ matrix.sudo_access }} --hostname=${{ matrix.hostname }}\
+          --password="${{ secrets[matrix.user_pass] }}"
       env:
         CI: true
