@@ -10,7 +10,8 @@ It is based on the Docker container and is limited by Github Actions, which cont
 
 ```yaml
 steps:
-- uses: tofandel/ssh-server-action@v1.1
+- name: Start SSH
+  uses: Tofandel/ssh-server-action@v1.0.0
   with:
     hostname: dev.com # Optional, the display hostname of the server
     port: 2222 # Optional, default value is 22. The exposed ssh port
