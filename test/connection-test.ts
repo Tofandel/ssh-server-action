@@ -6,6 +6,7 @@ import { optional } from './arguments';
 const username = optional('username');
 const password = optional('password');
 const hasSudo = optional('sudo');
+const hostname = optional('hostname');
 
 function createSSH() {
   const ssh = new NodeSSH();
@@ -41,5 +42,7 @@ describe('SSH', () => {
       expect(result.stdout).to.be.empty;
       expect(result.stderr).not.to.be.empty;
     }
+    result = await ssh.execCommand('hostname');
+    expect(result.stdout).to.be.eq(hostname);
   });
 });
