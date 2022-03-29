@@ -11,6 +11,7 @@ jobs:
     name: Port ${{matrix.port}}, User ${{matrix.user_name}}, Pass ${{matrix.user_pass}}, Sudo ${{matrix.sudo_access}}
 
     strategy:
+      fail-fast: false
       matrix:
         node_version: ['16.x']
         port: [22, 2222]
