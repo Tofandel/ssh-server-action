@@ -5,7 +5,7 @@ import { optional } from './arguments';
 
 const username = optional('username') || process.env.INPUT_USER_NAME;
 const password = optional('password') || process.env.INPUT_USER_PASSWORD;
-const hasSudo = optional('sudo') || process.env.INPUT_SUDO_ACCESS;
+const hasSudo = (optional('sudo') || process.env.INPUT_SUDO_ACCESS) === 'true';
 const hostname = optional('hostname') || process.env.INPUT_HOSTNAME;
 const debug = optional('debug') || process.env.INPUT_DEBUG;
 
